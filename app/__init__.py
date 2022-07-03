@@ -118,6 +118,7 @@ def get_time_line_post():
             for p in TimelinePost.select().order_by(TimelinePost.created_at.desc())
         ]
     }
+<<<<<<< HEAD
 
 @app.route('/timeline')
 def timeline():
@@ -135,3 +136,5 @@ def timeline():
 # @app.route('/timeline')
 #def timeline():
 #    return render_template('timeline.html', title="Timeline")
+=======
+>>>>>>> 075b47aa8a5abd7040d6e47c1e36e200dce84c00
