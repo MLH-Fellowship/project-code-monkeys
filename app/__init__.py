@@ -4,18 +4,28 @@ from dotenv import load_dotenv
 from peewee import *
 import datetime
 from playhouse.shortcuts import model_to_dict
+import logging
+
+# Set up DEBUG-level logging for peewee
+logger = logging.getLogger('peewee')
+logger.addHandler(logging.StreamHandler())
+logger.setLevel(logging.DEBUG)
 
 load_dotenv()
 app = Flask(__name__)
 
-mydb = MySQLDatabase(os.getenv("MYSQL_DATABASE"),
-    user = os.getenv("MYSQL_USER"),
-    password = os.getenv("MYSQL_PASSWORD"),
-    host = os.getenv("MYSQL_HOST"),
-    port = 3306
-)
+if os.getenv("TESTING") == "true":
+    print("Running in test mode")
+    mydb = SqliteDatabase('file:memory?mode=memory&cache=shared', uri=True)
+else:
+    mydb = MySQLDatabase(os.getenv("MYSQL_DATABASE"),
+        user = os.getenv("MYSQL_USER"),
+        password = os.getenv("MYSQL_PASSWORD"),
+        host = os.getenv("MYSQL_HOST"),
+        port = 3306
+    )
 
-print(mydb)
+print("From __init__.py:18", mydb)
 
 class TimelinePost(Model):
     name = CharField()
@@ -26,8 +36,10 @@ class TimelinePost(Model):
     class Meta:
         database = mydb
 
+print("About to connect")
 mydb.connect()
 mydb.create_tables([TimelinePost])
+mydb.close()
 
 
 STAR_USER_INFO = {
